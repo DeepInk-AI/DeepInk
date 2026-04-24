@@ -7,18 +7,12 @@ export async function getQualityControl(
     setLoading: any,
     setOpen?: any,
 ) {
-    // const urls = 'http://192.168.68.101:18767/aiprompt/nicu/prompt';
     const urls = 'http://localhost:3000/ollama/generate';
     let content: string = '';
-    const username = 'ai';
-    const password = 'David@.0527';
-    const token = btoa(`${username}:${password}`);
     try {
         const response = await fetch(urls, {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${token}`, // 认证
-                token: 'test',
                 Accept: 'text/event-stream', // 确保服务器响应是 SSE
                 'Content-Type': 'application/json', // 发送 JSON 请求
             },
@@ -30,9 +24,6 @@ export async function getQualityControl(
             throw new Error(`请求失败: ${response.status} - ${errorText}`);
         }
         const reader = response.body?.getReader();
-        abortRef.current = () => {
-            reader?.cancel();
-        };
         abortRef.current = () => {
             reader?.cancel();
         };
@@ -54,11 +45,9 @@ export async function getQualityControl(
                 if (!line.trim()) continue;
                 try {
                     if (setOpen) setOpen(true);
-                    // 解析 JSON 数据
                     setLoading(false);
                     const jsonString = line.startsWith('data:') ? line.slice(5) : line;
                     const data = JSON.parse(jsonString);
-
                     if (data.response) {
                         content += data.response;
                     }
@@ -67,7 +56,7 @@ export async function getQualityControl(
                         done = true;
                     }
                 } catch (err) {
-                    console.error('❌ 解析 JSON 失败', err, line);
+                    console.error('❌解析JSON失败', err, line);
                 }
             }
         }

@@ -38,10 +38,11 @@ export function WritingSettings() {
     const onUpdate = (message: any) => {
         console.log('AI内容', message)
         // setContent(md.render(message));
+        setContent(message);
     };
 
     const handleAi = () => {
-        const messageAi = "你好"
+        const messageAi = "你是什么模型直接回答"
         getQualityControl(
             messageAi,
             onSuccess,
